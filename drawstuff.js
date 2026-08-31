@@ -500,25 +500,25 @@ function projectPoly(imagedata,poly,view) {
         } // end catch
     } // end for each poly vertex
 } // end project poly
-    
 
-/* main -- here is where execution begins after window load */
-
-function main() {
-
-    // Get the canvas, context, and image data
-    var canvas = document.getElementById("viewport"); 
+function renderPoly(canvasId, poly, view) {
+    var canvas = document.getElementById(canvasId);
     var context = canvas.getContext("2d");
-    var w = context.canvas.width; // as set in html
-    var h = context.canvas.height;  // as set in html
-    var imagedata = context.createImageData(w,h);
-    
-    // define polygon and view
+    var w = context.canvas.width;
+    var h = context.canvas.height;
+    var imagedata = context.createImageData(w, h);
+
+    projectPoly(imagedata, poly, view);
+    fillPoly(imagedata, poly);
+
+    context.putImageData(imagedata, 0, 0);
+}
+
+function renderPoly1() {
     var testEye = new Vector(0,0,0);
     var testAt = Vector.subtract(new Vector(0,0,10),testEye);
-    var view = {eye:testEye, at:testAt, up:new Vector(0,1,0)};
-    // var poly = [{x:-5,y:5,z:10,c:new Color(255,0,0,255)}, {x:5,y:5,z:10,c:new Color(0,255,0,255)}, 
-    //             {x:5,y:-5,z:10,c:new Color(0,0,0,255)}, {x:-5,y:-5,z:10,c:new Color(0,0,255,255)}];
+    var testUp = new Vector(0, 1, 0);
+    var view = {eye:testEye, at:testAt, up: testUp};
 
     var poly1 = [
         {x: 0, y: 5, z: 10, c: new Color(0,255,0,255)},
@@ -527,9 +527,10 @@ function main() {
         {x: -5, y: 0, z: 10, c: new Color(0,0,0,255)},
     ];
 
-    projectPoly(imagedata,poly1,view);
-    fillPoly(imagedata,poly1);
+    renderPoly("viewport1", poly1, view)
+}
 
+function renderPoly2() {
     var poly2 = [
         {x: -5, y: 5, z: 10, c: new Color(255,0,0,255)},
         {x: 5, y: 5, z: 15, c: new Color(0,255,0,255)},
@@ -537,12 +538,17 @@ function main() {
         {x: -5, y: -5, z: 10, c: new Color(0,0,255,255)},
     ]
 
-    projectPoly(imagedata, poly2, {
-        eye: testEye,
-        at: new Vector(0, -2, 10),
-        up: new Vector(0, 1, 0)
-    });
-    fillPoly(imagedata, poly2)
+    var testEye = new Vector(0, 0, 0);
+    var testAt = Vector.subtract(new Vector(0, -2, 10), testEye);
+    var testUp = new Vector(0, 1, 0);
+    var view = {eye: testEye, at: testAt, up: testUp};
 
-    context.putImageData(imagedata, 0, 0); // display the image in the context
+    renderPoly("viewport2", poly2, view);
+}
+
+/* main -- here is where execution begins after window load */
+
+function main() {
+    renderPoly1();
+    renderPoly2();
 }
